@@ -188,55 +188,45 @@ func seedToPrivateKey(seed []byte) (*ecdsa.PrivateKey, error) {
 	return privKey, nil
 }
 
-func encryptMnemonic(mnemonic string, key, nonce []byte) (enctyptedMnemonic []byte) {
-
+// Encrypt mnemonic to chacha20 with
+// Key should be 32 byte long
+// nonce should be 24 byte long
+func encryptMnemonic(mnemonic string, key, nonce []byte) (encryptedMnemonic []byte) {
 	// Create a new ChaCha20 cipher
 	cipher, err := chacha20.NewUnauthenticatedCipher(key, nonce)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Encrypt the mnemonic
-	data := []byte(mnemonic)
-	enctyptedMnemonic = make([]byte, len(data))
-	cipher.XORKeyStream(enctyptedMnemonic, data)
-	// fmt.Printf("len of encrypted %v\n", )
-
-	return enctyptedMnemonic
+	encryptedMnemonic = make([]byte, len(mnemonic))
+	cipher.XORKeyStream(encryptedMnemonic, []byte(mnemonic))
+	return encryptedMnemonic
 }
 
+// keyHex  32 byte key in hex
+// nonceHex  24 byte nonce in hex
 func decryptMnemonic(encryptedMnemonicHex, keyHex, nonceHex string) []byte {
-	// The encryption key and nonce used during encryption
-	// In a real-world application, these should be securely stored and retrieved
-	// keyHex := "your 256-bit key in hex"
-	// nonceHex := "your nonce in hex"
-
 	key, err := hex.DecodeString(keyHex)
 	if err != nil {
 		log.Fatalf("error when decoding keyHex: %s", err)
 	}
-
 	nonce, err := hex.DecodeString(nonceHex)
 	if err != nil {
 		log.Fatalf("error when decoding nonceHex %s", err)
 	}
-
 	// Encrypted data (hexadecimal format)
 	// encryptedHex := "your encrypted data in hex"
 	encrypted, err := hex.DecodeString(encryptedMnemonicHex)
 	if err != nil {
 		log.Fatalf("error when decoding encryptedHex %s", err)
 	}
-
 	// Create a new ChaCha20 cipher for decryption
 	cipher, err := chacha20.NewUnauthenticatedCipher(key, nonce)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Decrypt the data
 	decrypted := make([]byte, len(encrypted))
 	cipher.XORKeyStream(decrypted, encrypted)
-
 	return decrypted
 }
