@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/pem"
 	"fmt"
@@ -98,7 +99,10 @@ func main() {
 		log.Fatal("Nonce must be exactly 24 bytes long")
 	}
 	encryptedMnemonic := encryptMnemonic(mnemonic, key, nonce)
-
+//32344368617261637465724e6f6e63652121212121212121
+//333233343433363836313732363136333734363537323465366636653633363532313231323132313231323132313231
+//[50 52 67 104 97 114 97 99 116 101 114 78 111 110 99 101 33 33 33 33 33 33 33 33]
+//[50 52 67 104 97 114 97 99 116 101 114 78 111 110 99 101 33 33 33 33 33 33 33 33]
 	// differentKey, _ := set32BytePassword("pepelaug1h1231sdfsdfsdf")
 	// decryptedMnemonic := decryptMnemonic(hex.EncodeToString(encryptedMnemonic), hex.EncodeToString(differentKey), hex.EncodeToString(nonce))
 	decryptedMnemonic := decryptMnemonic(hex.EncodeToString(encryptedMnemonic), hex.EncodeToString(key), hex.EncodeToString(nonce))
@@ -108,11 +112,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// fmt.Println("Debug:::::::::")
-	// fmt.Printf("Encrypted Mnemonic: %v, len: %v\n", encryptedMnemonic, len(encryptedMnemonic))
-	// fmt.Printf("Encrypted Mnemonic Hex: <%x>, len: %v\n\nnonceHex: %x\nnonce: %v\n\n", encryptedMnemonic, len(fmt.Sprintf("%x", encryptedMnemonic)), hex.EncodeToString(nonce), nonce)
-	// fmt.Printf("keyHex: %v\nkey: %v len:%v\nkeyString: %s\nbase64: %s\n\n", hex.EncodeToString(key), key, len(key), string(key), base64.StdEncoding.EncodeToString(key))
-	// fmt.Printf("Original Mnemonic:\n%s\nDecrypted mnemonic:\n%v\n", mnemonic, string(decryptedMnemonic))
+	fmt.Println("Debug:::::::::")
+	fmt.Printf("Encrypted Mnemonic: %v, len: %v\n", encryptedMnemonic, len(encryptedMnemonic))
+	fmt.Printf("Encrypted Mnemonic Hex: <%x>, len: %v\n\nnonceHex: %x\nnonce: %v\n\n", encryptedMnemonic, len(fmt.Sprintf("%x", encryptedMnemonic)), hex.EncodeToString(nonce), nonce)
+	fmt.Printf("keyHex: %v\nkey: %v len:%v\nkeyString: %s\nbase64: %s\n\n", hex.EncodeToString(key), key, len(key), string(key), base64.StdEncoding.EncodeToString(key))
+	fmt.Printf("Original Mnemonic:\n%s\nDecrypted mnemonic:\n%v\n", mnemonic, string(decryptedMnemonic))
 	tSShConnection(priv)
 	writePrivAndPubKeysToFiles(priv)
 }
